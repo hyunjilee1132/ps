@@ -1,8 +1,14 @@
 import java.util.Scanner;
 
 public class Main {
+    static int[] cache;
+    
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        cache = new int[12];
+        cache[1] = 1;
+        cache[2] = 2;
+        cache[3] = 4;
 
         int t = sc.nextInt();
         for (int tc=0; tc<t; tc++) {
@@ -15,9 +21,9 @@ public class Main {
     }
 
     public static int dp(int n) {
-        if (n<=2) return n;
-        if (n==3) return 4;
-
-        return dp(n-1) + dp(n-2) + dp(n-3);
+        if (cache[n] > 0) return cache[n];
+        else {
+            return cache[n] = dp(n-1) + dp(n-2) + dp(n-3);
+        }
     }
 }
