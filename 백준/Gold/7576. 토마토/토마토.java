@@ -10,7 +10,6 @@ public class Main {
     static int[] dy = {1, 0, -1, 0};
     static int[] dx = {0, 1, 0, -1};
     static Queue<int[]> queue = new LinkedList<>();
-    static int totalZeroCount = 0;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -24,23 +23,40 @@ public class Main {
         for (int y=0; y<N; y++) {
             for (int x=0; x<M; x++) {
                 box[y][x] = sc.nextInt();
-                if (box[y][x] == 0) totalZeroCount++;
-                else if (box[y][x] == 1) {
-                    queue.offer(new int[]{y,x});
-                        discovered[y][x] = true;
-                }
             }
         }
 
-        if (totalZeroCount == 0) {
-            System.out.println(0);
-            return;
+        int zeroCount = 0;
+        // 전체 탐색했을때 0이 없으면 0하고 끝
+        for (int y=0; y<N; y++) {
+            for (int x=0; x<M; x++) {
+                if (box[y][x] == 0) zeroCount++;
+            }
         }
 
-        int result = bfs();
+        if (zeroCount == 0) System.out.println(0); // 처음부터 모든 토마토가 익어있는 상태면 0
+        else {
+            for (int y=0; y<N; y++) {
+                for (int x=0; x<M; x++) {
+                    if (box[y][x] == 1) {
+                        queue.offer(new int[]{y, x});
+                        discovered[y][x] = true;
+                    }
+                }
+            }
 
-        if (totalZeroCount == 0) System.out.println(result);
-        else System.out.println(-1);
+            int result = bfs();
+
+            int finalZeroCount = 0;
+            for (int y=0; y<N; y++) {
+                for (int x=0; x<M; x++) {
+                    if (box[y][x] == 0) finalZeroCount++;
+                }
+            }
+
+            if (finalZeroCount == 0) System.out.println(result);
+            else System.out.println(-1);
+        }
     }
 
     static int bfs() {
@@ -63,8 +79,7 @@ public class Main {
                     if (isValid(ny, nx) && discovered[ny][nx] == false && box[ny][nx] == 0) {
                         queue.offer(new int[]{ny, nx});
                         discovered[ny][nx] = true;
-                        // box[ny][nx] = 1;
-                        totalZeroCount--;
+                        box[ny][nx] = 1;
                     }
                 }
             }
