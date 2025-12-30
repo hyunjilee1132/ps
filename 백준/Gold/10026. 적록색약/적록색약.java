@@ -4,22 +4,16 @@ import java.util.Scanner;
 
 public class Main {
     static int N;
-    static char[][] grid;
-    static char[][] rgGrid;
-    static boolean[][] discovered;
-    static boolean[][] rgDiscovered;
     static int[] dy = {1, 0, -1, 0};
     static int[] dx = {0, 1, 0, -1};
-    static int count = 0;
-    static int rgCount = 0;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
 
         // 입력 
-        grid = new char[N][N];
-        rgGrid = new char[N][N];
+        char[][] grid = new char[N][N];
+        char[][] rgGrid = new char[N][N];
         for (int y=0; y<N; y++) {
             String str = sc.next();
             for (int x=0; x<N; x++) {
@@ -32,16 +26,18 @@ public class Main {
             }
         }
 
-        discovered = new boolean[N][N];
-        rgDiscovered = new boolean[N][N];
+        boolean[][] discovered = new boolean[N][N];
+        boolean[][] rgDiscovered = new boolean[N][N];
+        int count = 0;
+        int rgCount = 0;
         for (int y=0; y<N; y++) {
             for (int x=0; x<N; x++) {
                 if (!discovered[y][x]) {
-                    bfs(y, x);
+                    commonBfs(y, x, discovered, grid);
                     count++;
                 }
                 if (!rgDiscovered[y][x]) {
-                    rgBfs(y, x);
+                    commonBfs(y, x, rgDiscovered, rgGrid);
                     rgCount++;
                 }
             }
@@ -51,7 +47,7 @@ public class Main {
     }
 
     
-    static void bfs(int startY, int startX) {
+    static void commonBfs(int startY, int startX, boolean[][] discovered, char[][] grid) {
         Queue<int[]> queue = new LinkedList<>();
         queue.offer(new int[]{startY, startX});
         discovered[startY][startX] = true;
@@ -67,28 +63,6 @@ public class Main {
 
                 if (isValid(ny, nx) && !discovered[ny][nx] && grid[cy][cx] == grid[ny][nx]) {
                     discovered[ny][nx] = true;
-                    queue.offer(new int[]{ny, nx});
-                }
-            }
-        }
-    }
-
-    static void rgBfs(int startY, int startX) {
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{startY, startX});
-        rgDiscovered[startY][startX] = true;
-
-        while (!queue.isEmpty()) {
-            int[] curr = queue.poll();
-            int cy = curr[0];
-            int cx = curr[1];
-
-            for (int i=0; i<4; i++) {
-                int ny = cy + dy[i];
-                int nx = cx + dx[i];
-
-                if (isValid(ny, nx) && !rgDiscovered[ny][nx] && rgGrid[cy][cx] == rgGrid[ny][nx]) {
-                    rgDiscovered[ny][nx] = true;
                     queue.offer(new int[]{ny, nx});
                 }
             }
